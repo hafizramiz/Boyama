@@ -130,6 +130,7 @@ class FloodFillPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    print("Paint called");
     //canvas.drawImage(image, Offset(0,0), Paint());
     double w = _width ?? image.width.toDouble();
     double h = _height ?? image.height.toDouble();

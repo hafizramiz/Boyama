@@ -47,38 +47,38 @@ class _MyHomePageState extends State<MyHomePage> {
                 avoidColor: [Colors.transparent, Colors.black],
                 tolerance: 10,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _fillColor = Colors.brown;
-                      });
-                    },
-                    child: Text("Brown",style: TextStyle(color: Colors.black),),
-                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.brown)),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _fillColor = Colors.amber;
-                      });
-                    },
-                    child: Text("Amber",style: TextStyle(color: Colors.black),),
-                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.amber)),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _fillColor = Colors.cyan;
-                      });
-                    },
-                    child: Text("Cyan",style: TextStyle(color: Colors.black),),
-                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.cyan)),
-                  ),
-                ],
-              )
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //   children: [
+              //     TextButton(
+              //       onPressed: () {
+              //         setState(() {
+              //           _fillColor = Colors.brown;
+              //         });
+              //       },
+              //       child: Text("Brown",style: TextStyle(color: Colors.black),),
+              //       style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.brown)),
+              //     ),
+              //     TextButton(
+              //       onPressed: () {
+              //         setState(() {
+              //           _fillColor = Colors.amber;
+              //         });
+              //       },
+              //       child: Text("Amber",style: TextStyle(color: Colors.black),),
+              //       style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.amber)),
+              //     ),
+              //     TextButton(
+              //       onPressed: () {
+              //         setState(() {
+              //           _fillColor = Colors.cyan;
+              //         });
+              //       },
+              //       child: Text("Cyan",style: TextStyle(color: Colors.black),),
+              //       style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.cyan)),
+              //     ),
+              //   ],
+              // )
             ],
           ),
         ),
