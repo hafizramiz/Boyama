@@ -48,6 +48,7 @@ class _DrawingAreaState extends State<DrawingArea> {
                 paths: provider.paths,
                 backgroundColor: provider.backgroundColor,
                 canvasSize: provider.canvasSize,
+                showMaskImage: provider.maskEnabled,
               ),
               size: Size.infinite,
             ),

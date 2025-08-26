@@ -49,6 +49,14 @@ class ToolBar extends StatelessWidget {
               
               const VerticalDivider(),
               
+              // Mask Controls
+              Expanded(
+                flex: 1,
+                child: _buildMaskControls(context, provider),
+              ),
+              
+              const VerticalDivider(),
+              
               // Actions
               // Expanded(
               //   flex: 1,
@@ -175,51 +183,97 @@ class ToolBar extends StatelessWidget {
     );
   }
 
-  // Widget _buildActions(BuildContext context, PaintingProvider provider) {
-  //   return Column(
-  //     mainAxisSize: MainAxisSize.min,
-  //     children: [
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //         children: [
-  //           IconButton(
-  //             onPressed: provider.canUndo ? provider.undo : null,
-  //             icon: const Icon(Icons.undo, size: 7),
-  //             tooltip: 'Geri Al',
-  //             padding: EdgeInsets.zero,
-  //             constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
-  //           ),
-  //           IconButton(
-  //             onPressed: provider.canRedo ? provider.redo : null,
-  //             icon: const Icon(Icons.redo, size: 7),
-  //             tooltip: 'Yinele',
-  //             padding: EdgeInsets.zero,
-  //             constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
-  //           ),
-  //         ],
-  //       ),
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //         children: [
-  //           IconButton(
-  //             onPressed: () => _showClearDialog(context, provider),
-  //             icon: const Icon(Icons.clear, size: 7),
-  //             tooltip: 'Temizle',
-  //             padding: EdgeInsets.zero,
-  //             constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
-  //           ),
-  //           IconButton(
-  //             onPressed: () => _saveImage(context, provider),
-  //             icon: const Icon(Icons.save, size: 7),
-  //             tooltip: 'Kaydet',
-  //             padding: EdgeInsets.zero,
-  //             constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
+  Widget _buildMaskControls(BuildContext context, PaintingProvider provider) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 45,
+          height: 45,
+          decoration: BoxDecoration(
+            color: provider.maskEnabled ? Colors.green : Colors.grey[300],
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(
+              color: provider.maskEnabled ? Colors.green : Colors.grey,
+              width: 2,
+            ),
+          ),
+          child: IconButton(
+            onPressed: () {
+              if (provider.maskEnabled) {
+                provider.disableMaskPainting();
+              } else {
+                provider.enableMaskPainting('assets/images/hs_araba.png');
+              }
+            },
+            icon: Icon(
+              Icons.image_outlined,
+              color: provider.maskEnabled ? Colors.white : Colors.grey[600],
+              size: 16,
+            ),
+            tooltip: provider.maskEnabled ? 'Mask Kapat' : 'Mask Aç',
+            padding: EdgeInsets.zero,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          'Mask',
+          style: TextStyle(
+            fontSize: 7,
+            color: provider.maskEnabled ? Colors.green : Colors.grey[600],
+            fontWeight: provider.maskEnabled ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActions(BuildContext context, PaintingProvider provider) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              onPressed: provider.canUndo ? provider.undo : null,
+              icon: const Icon(Icons.undo, size: 16),
+              tooltip: 'Geri Al',
+              padding: const EdgeInsets.all(2),
+              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+            ),
+            IconButton(
+              onPressed: provider.canRedo ? provider.redo : null,
+              icon: const Icon(Icons.redo, size: 16),
+              tooltip: 'Yinele',
+              padding: const EdgeInsets.all(2),
+              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              onPressed: () => _showClearDialog(context, provider),
+              icon: const Icon(Icons.clear, size: 16),
+              tooltip: 'Temizle',
+              padding: const EdgeInsets.all(2),
+              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+            ),
+            IconButton(
+              onPressed: () => _saveImage(context, provider),
+              icon: const Icon(Icons.save, size: 16),
+              tooltip: 'Kaydet',
+              padding: const EdgeInsets.all(2),
+              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 
   void _showClearDialog(BuildContext context, PaintingProvider provider) {
     showDialog(

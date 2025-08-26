@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../models/draw_point.dart';
+import '../services/mask_painting_service.dart';
 
 class PaintingCanvas extends CustomPainter {
   final List<DrawPath> paths;
   final Color backgroundColor;
   final Size canvasSize;
   final DrawPath? currentPath;
+  final bool showMaskImage;
 
   PaintingCanvas({
     required this.paths,
     required this.backgroundColor,
     required this.canvasSize,
     this.currentPath,
+    this.showMaskImage = false,
   });
 
   @override
@@ -23,6 +26,11 @@ class PaintingCanvas extends CustomPainter {
       ..style = PaintingStyle.fill;
     
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), backgroundPaint);
+
+    // Draw mask image if enabled
+    if (showMaskImage) {
+      MaskBasedPaintingService.drawMaskImage(canvas, size);
+    }
 
     // Draw all completed paths
     for (final path in paths) {

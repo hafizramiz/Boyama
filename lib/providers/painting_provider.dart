@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/draw_mode.dart';
 import '../models/draw_point.dart';
+import '../services/mask_painting_service.dart';
 
 class PaintingProvider extends ChangeNotifier {
   // Drawing state
@@ -50,6 +51,9 @@ class PaintingProvider extends ChangeNotifier {
   Color _backgroundColor = Colors.white;
   Size _canvasSize = const Size(800, 600);
   
+  // Mask painting support
+  bool _maskEnabled = false;
+  
   // Getters
   List<DrawPath> get paths => _paths;
   DrawMode get currentDrawMode => _currentDrawMode;
@@ -63,9 +67,15 @@ class PaintingProvider extends ChangeNotifier {
   Size get canvasSize => _canvasSize;
   bool get canUndo => _undoStack.length - _redoIndex - 1 > 0;
   bool get canRedo => _undoStack.isNotEmpty && _redoIndex > 0;
+  bool get maskEnabled => _maskEnabled;
   
   // Drawing methods
   void startPainting(Offset position) {
+    // Mask kontrolü - sadece izin verilen alanlarda boyama yap
+    if (_maskEnabled && !MaskBasedPaintingService.canPaintAt(position, _canvasSize)) {
+      return; // Bu alanda boyama yapılamaz
+    }
+    
     _isPainting = true;
     
     // Save current state for undo
@@ -95,6 +105,11 @@ class PaintingProvider extends ChangeNotifier {
   
   void updatePainting(Offset position) {
     if (!_isPainting || _paths.isEmpty) return;
+    
+    // Mask kontrolü - sadece izin verilen alanlarda boyama yap
+    if (_maskEnabled && !MaskBasedPaintingService.canPaintAt(position, _canvasSize)) {
+      return; // Bu alanda boyama yapılamaz
+    }
     
     final currentPath = _paths.last;
     final newPoint = DrawPoint(
@@ -130,8 +145,13 @@ class PaintingProvider extends ChangeNotifier {
   
   // Flood fill implementation
   void floodFill(Offset position, Size canvasSize) {
-    // This would require converting the canvas to image data
-    // For now, we'll add a simple filled circle
+    // Mask modunda ise, önce lock area oluştur
+    if (_maskEnabled) {
+      _createLockAreaAndFill(position, canvasSize);
+      return;
+    }
+    
+    // Normal flood fill - basit daire çizimi
     final fillPath = DrawPath(
       points: [
         DrawPoint(
@@ -159,6 +179,40 @@ class PaintingProvider extends ChangeNotifier {
     notifyListeners();
   }
   
+  // Mask-based flood fill
+  void _createLockAreaAndFill(Offset position, Size canvasSize) async {
+    // Lock area oluştur
+    await MaskBasedPaintingService.createLockArea(position, canvasSize);
+    
+    // Eğer lock area oluşturulduysa, o alanı boyayabilir
+    if (MaskBasedPaintingService.hasLockArea) {
+      final fillPath = DrawPath(
+        points: [
+          DrawPoint(
+            offset: position,
+            color: _currentColor,
+            brushSize: _brushSize * 5,
+            timestamp: DateTime.now(),
+          )
+        ],
+        color: _currentColor,
+        brushSize: _brushSize * 5,
+        drawMode: 'mask_bucket_fill',
+        createdAt: DateTime.now(),
+      );
+      
+      // Save for undo
+      if (_redoIndex > 0) {
+        _undoStack.removeRange(_undoStack.length - _redoIndex, _undoStack.length);
+        _redoIndex = 0;
+      }
+      
+      _paths.add(fillPath);
+      _undoStack.add(List.from(_paths));
+      notifyListeners();
+    }
+  }
+  
   // Settings methods
   void setDrawMode(DrawMode mode) {
     _currentDrawMode = mode;
@@ -182,6 +236,26 @@ class PaintingProvider extends ChangeNotifier {
   
   void setCanvasSize(Size size) {
     _canvasSize = size;
+    notifyListeners();
+  }
+  
+  // Mask methods
+  Future<void> enableMaskPainting(String maskImagePath) async {
+    await MaskBasedPaintingService.loadMaskImage(maskImagePath);
+    _maskEnabled = true;
+    notifyListeners();
+  }
+  
+  void disableMaskPainting() {
+    _maskEnabled = false;
+    MaskBasedPaintingService.dispose();
+    notifyListeners();
+  }
+  
+  // Create lock area for bucket fill in mask mode
+  Future<void> createMaskLockArea(Offset position) async {
+    if (!_maskEnabled) return;
+    await MaskBasedPaintingService.createLockArea(position, _canvasSize);
     notifyListeners();
   }
   

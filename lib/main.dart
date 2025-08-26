@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => PaintingProvider(),
       child: MaterialApp(
-        title: 'Flutter Boyama Uygulaması',
+        title: 'Flutter Boyama Uygulaması - Araba',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,

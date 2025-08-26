@@ -18,10 +18,17 @@ class _PaintingScreenState extends State<PaintingScreen> {
   @override
   void initState() {
     super.initState();
+    
     // Start magic color animation timer
     _magicTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       final provider = Provider.of<PaintingProvider>(context, listen: false);
       provider.startMagicAnimation();
+    });
+    
+    // Enable mask painting with the provided PNG (hs_araba.png)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<PaintingProvider>(context, listen: false);
+      provider.enableMaskPainting('assets/images/hs_araba.png');
     });
   }
 
